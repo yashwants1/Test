@@ -1,1 +1,65 @@
+name: "test rg Terraform Workflow"
 
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main      
+
+permissions:
+  id-token: write
+  contents: read
+  
+jobs: 
+  terraform-init-plan:
+    runs-on: self-hosted
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+    
+      - name: Azure Login
+        uses: Azure/login@v2.3.0
+        with:
+          client-id: 13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1
+          tenant-id: 06af33d0-e479-4edf-a312-5cc8f0113164
+          subscription-id: b3e9b690-1f69-4cae-899a-6a1c65b2db91
+            
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+        working-directory: RG
+        
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false  
+        working-directory: RG
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        working-directory: RG       
+      
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+        working-directory: RG   
+        
+  terraform-apply:    
+    runs-on: self-hosted
+    
+    needs: terraform-init-plan
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+    
+      - name: Azure Login
+        uses: Azure/login@v2.3.0
+        with:
+          client-id: 13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1
+          tenant-id: 06af33d0-e479-4edf-a312-5cc8f0113164
+          subscription-id: b3e9b690-1f69-4cae-899a-6a1c65b2db91  
