@@ -21,18 +21,11 @@ jobs:
         uses: actions/checkout@v5.0.0
     
       - name: Azure Login
-        uses: azure/login@v2.3.0
+        uses: Azure/login@v2.3.0
         with:
           client-id: 13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1
           tenant-id: 06af33d0-e479-4edf-a312-5cc8f0113164
           subscription-id: b3e9b690-1f69-4cae-899a-6a1c65b2db91
-
-      - name: Set Terraform Azure Credentials
-        run: |
-          echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
-          echo "ARM_CLIENT_ID=13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1" >> $GITHUB_ENV
-          echo "ARM_TENANT_ID=06af33d0-e479-4edf-a312-5cc8f0113164" >> $GITHUB_ENV
-          echo "ARM_SUBSCRIPTION_ID=b3e9b690-1f69-4cae-899a-6a1c65b2db91" >> $GITHUB_ENV
 
       - name: Terraform Format Check
         run: terraform fmt -check
@@ -61,18 +54,15 @@ jobs:
         uses: actions/checkout@v5.0.0
     
       - name: Azure Login
-        uses: azure/login@v2.3.0
+        uses: Azure/login@v2.3.0
         with:
           client-id: 13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1
           tenant-id: 06af33d0-e479-4edf-a312-5cc8f0113164
           subscription-id: b3e9b690-1f69-4cae-899a-6a1c65b2db91
 
-      - name: Set Terraform Azure Credentials
-        run: |
-          echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
-          echo "ARM_CLIENT_ID=13ba5cc9-7ced-4ae0-9f68-ff0a9caa6be1" >> $GITHUB_ENV
-          echo "ARM_TENANT_ID=06af33d0-e479-4edf-a312-5cc8f0113164" >> $GITHUB_ENV
-          echo "ARM_SUBSCRIPTION_ID=b3e9b690-1f69-4cae-899a-6a1c65b2db91" >> $GITHUB_ENV
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: RG
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
